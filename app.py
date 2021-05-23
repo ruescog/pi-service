@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import csv
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
@@ -13,14 +14,48 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def index():
-    return redirect(url_for("clasificacion_odisea"))
+    return redirect(url_for("indice"))
 
-### REGISTRO Y LOGIN
+@app.route("/indice")
+def indice():
+    data = []
+    with open("clasificacion-circuito.csv") as fichero:
+        lector = csv.DictReader(fichero)
+        for indice, fila in enumerate(lector):
+            if indice < 8:
+                fila.update({"status": "clasificado"})
+            data.append(fila)
 
-@app.route('/clasificacion-odisea', methods=["GET"])
-def clasificacion_odisea():
+    return json.dumps(data)
+
+@app.route('/clasificacion-odisea/<idtournament>', methods=["GET"])
+def clasificacion_odisea(idtournament):
     if request.method == "GET":
-        req = requests.get('https://www.mordrek.com:666/api/v1/queries?req={"compStandings":{"id":"compStandings","idmap":{"idcompetition":"23749"},"filters":{"team_name":"[PI]","active":"1"},"ordercol":"sorting","order":"desc","limit":30,"from":0,"group":null,"aggr":null}}')
+        compStandings = {
+            "id": "compStandings",
+            "idmap" : {
+                "idcompetition": idtournament
+            }
+        }
+
+        req = {
+            "compStandings": {
+                "id": "compStandings",
+                "idmap": {
+                    "idcompetition": idtournament,
+                },
+                "filters": {
+                    "team_name": "[PI]",
+                    "active": 1,
+                },
+                "ordercol": "sorting",
+                "order": "desc",
+                "limit": 256,
+                "from": 0
+            }
+        }
+
+        req = requests.get(f'https://www.mordrek.com:666/api/v1/queries?req={req}')
         req = req.json()
         req = req["response"]["compStandings"]["result"]["rows"]
         lista_datos = [{
@@ -114,4 +149,4 @@ def colorear_clasificacion(equipos) -> list:
         return equipos_super_clasificados
 
 if __name__ == "__main__":
-    app.run(host="memen.ddns.net", port=int(os.getenv("PORT", 30504)), debug=True)
+    app.run(port=int(os.getenv("PORT", 30504)), debug=True)
