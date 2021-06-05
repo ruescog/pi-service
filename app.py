@@ -62,7 +62,7 @@ def clasificacion_odisea(idtournament):
             "position": indice+1,
             "coach_name": fila[27],
             "team_name": fila[22],
-            "idrace": Mapping.ids_to_razas([fila[21]])[0],
+            "race_name": Mapping.ids_to_razas([fila[21]])[0],
             "wins": fila[6],
             "draws": fila[7],
             "losses": fila[8],
@@ -105,7 +105,7 @@ def colorear_clasificacion(equipos) -> list:
                 if mejor_equipo["coach_name"] == equipo["coach_name"] or int(equipo["wins"]) + int(equipo["draws"]) + int(equipo["losses"]) > 40:
                     repetido = True
                     break
-                if mejor_equipo["idrace"] == equipo["idrace"]:
+                if mejor_equipo["race_name"] == equipo["race_name"]:
                     equipos_misma_raza += 1
                 if equipos_misma_raza >= equipos_maximos_raza:
                     break
@@ -121,7 +121,7 @@ def colorear_clasificacion(equipos) -> list:
 
         # Cojo todos los equipos stunty
         ids_razas_stunty = Mapping.razas_to_ids(["Goblins", "Halflings", "Ogros"])
-        equipos_stunty = list(filter(lambda equipo: equipo["idrace"] in ids_razas_stunty, equipos))
+        equipos_stunty = list(filter(lambda equipo: equipo["race_name"] in ids_razas_stunty, equipos))
 
         # Quito los stunty que se han clasificado en intervalo verde
         ids_equipos_clasificados = [equipo["idteam"] for equipo in equipos_clasificados]
