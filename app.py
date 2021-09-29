@@ -28,8 +28,8 @@ def indice():
 
     return json.dumps(data)
 
-@app.route('/clasificacion-odisea/<idtournament>', methods=["GET"])
-def clasificacion_odisea(idtournament):
+@app.route('/clasificacion-ccl/<idtournament>', methods=["GET"])
+def clasificacion_ccl(idtournament):
     if request.method == "GET":
         compStandings = {
             "id": "compStandings",
