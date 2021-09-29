@@ -55,7 +55,7 @@ def clasificacion_ccl(idtournament):
             }
         }
 
-        req = requests.get(f'https://www.mordrek.com:666/api/v1/queries?req={req}')
+        req = requests.get(f'https://www.mordrek.com:666/api/v1/queries?req={req}', verify=False)
         req = req.json()
         req = req["response"]["compStandings"]["result"]["rows"]
         lista_datos = [{
